@@ -48,12 +48,20 @@ for (let i = 0; i < asteroidCount; i++) {
   asteroids.push(createAsteroid());
 }
 
-function drawSpaceship() {
-  ctx.fillStyle = 'white';
-  ctx.beginPath();
-  ctx.arc(spaceship.x, spaceship.y, spaceship.size, 0, Math.PI * 2);
-  ctx.fill();
-}
+function drawSpaceshipShape() {
+    ctx.beginPath();
+    ctx.moveTo(spaceship.x, spaceship.y - spaceship.size);
+    ctx.lineTo(spaceship.x + spaceship.size, spaceship.y + spaceship.size);
+    ctx.lineTo(spaceship.x - spaceship.size, spaceship.y + spaceship.size);
+    ctx.closePath();
+  }
+  
+  function drawSpaceship() {
+    ctx.fillStyle = 'white';
+    drawSpaceshipShape();
+    ctx.fill();
+  }
+  
 
 function drawAsteroids() {
   ctx.fillStyle = 'gray';
