@@ -13,26 +13,33 @@ const spaceship = {
   
 
 function createAsteroid() {
-  const size = 10 + Math.random() * 30;
-  const vertexCount = 6 + Math.floor(Math.random() * 5);
-  const vertices = [];
-
-  for (let i = 0; i < vertexCount; i++) {
-    const angle = (Math.PI * 2) * (i / vertexCount);
-    const distance = size + Math.random() * size * 0.3;
-    vertices.push({
-      x: Math.cos(angle) * distance,
-      y: Math.sin(angle) * distance,
-    });
-  }
-
-  return {
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    size,
-    vertices,
-  };
-}
+    const size = 10 + Math.random() * 30;
+    const vertexCount = 6 + Math.floor(Math.random() * 5);
+    const vertices = [];
+    const safeZoneRadius = spaceship.size * 3;
+  
+    for (let i = 0; i < vertexCount; i++) {
+      const angle = (Math.PI * 2) * (i / vertexCount);
+      const distance = size + Math.random() * size * 0.3;
+      vertices.push({
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance,
+      });
+    }
+  
+    let x, y;
+    do {
+      x = Math.random() * canvas.width;
+      y = Math.random() * canvas.height;
+    } while (Math.sqrt((spaceship.x - x) ** 2 + (spaceship.y - y) ** 2) < size + safeZoneRadius);
+  
+    return {
+      x,
+      y,
+      size,
+      vertices,
+    };
+  }  
 
 const asteroids = [];
 const asteroidCount = 50;
