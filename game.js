@@ -8,9 +8,9 @@ const spaceship = {
     vx: 0,
     vy: 0,
     speed: 0.5,
-    drag: 0.99
+    drag: 0.99,
+    rotation: 0,
   };
-  
 
 function createAsteroid() {
     const size = 10 + Math.random() * 30;
@@ -49,19 +49,24 @@ for (let i = 0; i < asteroidCount; i++) {
 }
 
 function drawSpaceshipShape() {
+    ctx.save();
+    ctx.translate(spaceship.x, spaceship.y);
+    ctx.rotate(spaceship.rotation);
+  
     ctx.beginPath();
-    ctx.moveTo(spaceship.x, spaceship.y - spaceship.size);
-    ctx.lineTo(spaceship.x + spaceship.size, spaceship.y + spaceship.size);
-    ctx.lineTo(spaceship.x - spaceship.size, spaceship.y + spaceship.size);
+    ctx.moveTo(0, -spaceship.size);
+    ctx.lineTo(spaceship.size, spaceship.size);
+    ctx.lineTo(-spaceship.size, spaceship.size);
     ctx.closePath();
+  
+    ctx.restore();
   }
   
-  function drawSpaceship() {
+function drawSpaceship() {
     ctx.fillStyle = 'white';
     drawSpaceshipShape();
     ctx.fill();
   }
-  
 
 function drawAsteroids() {
   ctx.fillStyle = 'gray';
@@ -127,15 +132,19 @@ document.addEventListener('keydown', (event) => {
     switch (event.key) {
       case 'ArrowUp':
         spaceship.vy -= spaceship.speed;
+        spaceship.rotation = -Math.PI / 2;
         break;
       case 'ArrowDown':
         spaceship.vy += spaceship.speed;
+        spaceship.rotation = Math.PI / 2;
         break;
       case 'ArrowLeft':
         spaceship.vx -= spaceship.speed;
+        spaceship.rotation = Math.PI;
         break;
       case 'ArrowRight':
         spaceship.vx += spaceship.speed;
+        spaceship.rotation = 0;
         break;
       case ' ':
         spaceship.vx *= 0.8;
@@ -143,4 +152,5 @@ document.addEventListener('keydown', (event) => {
         break;
     }
   });
+  
   
