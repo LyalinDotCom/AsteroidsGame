@@ -2,15 +2,16 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const spaceship = {
-    x: canvas.width / 2,
-    y: canvas.height / 2,
-    size: 20,
-    vx: 0,
-    vy: 0,
-    speed: 0.5,
-    drag: 0.99,
-    rotation: 0,
-  };
+  x: canvas.width / 2,
+  y: canvas.height / 2,
+  size: 20,
+  speed: 4,
+  rotation: 0,
+  vx: 0,
+  vy: 0,
+  drag: 0.98,
+  angleOffset: Math.PI / 2
+};
 
 function createAsteroid() {
     const size = 10 + Math.random() * 30;
@@ -151,8 +152,8 @@ document.addEventListener('keydown', (event) => {
   switch (event.key) {
     case 'w':
     case 'W':
-      spaceship.vx += Math.cos(spaceship.rotation) * spaceship.speed;
-      spaceship.vy += Math.sin(spaceship.rotation) * spaceship.speed;
+      spaceship.vx += Math.cos(spaceship.rotation - spaceship.angleOffset) * spaceship.speed;
+      spaceship.vy += Math.sin(spaceship.rotation - spaceship.angleOffset) * spaceship.speed;
       break;
     case 'ArrowUp':
       break;
