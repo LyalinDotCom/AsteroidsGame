@@ -49,18 +49,30 @@ for (let i = 0; i < asteroidCount; i++) {
 }
 
 function drawSpaceshipShape() {
-    ctx.save();
-    ctx.translate(spaceship.x, spaceship.y);
-    ctx.rotate(spaceship.rotation);
-  
-    ctx.beginPath();
-    ctx.moveTo(0, -spaceship.size);
-    ctx.lineTo(spaceship.size, spaceship.size);
-    ctx.lineTo(-spaceship.size, spaceship.size);
-    ctx.closePath();
-  
-    ctx.restore();
-  }
+  ctx.save();
+  ctx.translate(spaceship.x, spaceship.y);
+  ctx.rotate(spaceship.rotation);
+
+  // Draw the main body of the spaceship
+  ctx.beginPath();
+  ctx.moveTo(0, -spaceship.size);
+  ctx.lineTo(spaceship.size, spaceship.size);
+  ctx.lineTo(-spaceship.size, spaceship.size);
+  ctx.closePath();
+  ctx.fillStyle = 'white';
+  ctx.fill();
+
+  // Draw the ship's bridge
+  ctx.beginPath();
+  ctx.moveTo(0, -spaceship.size * 0.5);
+  ctx.lineTo(spaceship.size * 0.5, spaceship.size * 0.5);
+  ctx.lineTo(-spaceship.size * 0.5, spaceship.size * 0.5);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+  ctx.fill();
+
+  ctx.restore();
+}
   
 function drawSpaceship() {
     ctx.fillStyle = 'white';
@@ -99,58 +111,60 @@ function resetSpaceship() {
 }
 
 function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-    // Update spaceship position and velocity
-    spaceship.x += spaceship.vx;
-    spaceship.y += spaceship.vy;
-    spaceship.vx *= spaceship.drag;
-    spaceship.vy *= spaceship.drag;
-  
-    // Keep the spaceship within the canvas boundaries
-    if (spaceship.x < 0) spaceship.x = 0;
-    if (spaceship.x > canvas.width) spaceship.x = canvas.width;
-    if (spaceship.y < 0) spaceship.y = 0;
-    if (spaceship.y > canvas.height) spaceship.y = canvas.height;
-  
-    drawAsteroids();
-    drawSpaceship();
-  
-    for (const asteroid of asteroids) {
-      if (isCollision(asteroid)) {
-        resetSpaceship();
-        break;
-      }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Update spaceship position and velocity
+  spaceship.x += spaceship.vx;
+  spaceship.y += spaceship.vy;
+  spaceship.vx *= spaceship.drag;
+  spaceship.vy *= spaceship.drag;
+
+  // Keep the spaceship within the canvas boundaries
+  if (spaceship.x < 0) spaceship.x = 0;
+  if (spaceship.x > canvas.width) spaceship.x = canvas.width;
+  if (spaceship.y < 0) spaceship.y = 0;
+  if (spaceship.y > canvas.height) spaceship.y = canvas.height;
+
+  drawAsteroids();
+  drawSpaceship();
+
+  for (const asteroid of asteroids) {
+    if (isCollision(asteroid)) {
+      resetSpaceship();
+      break;
     }
-  
-    requestAnimationFrame(gameLoop);
   }
+
+  requestAnimationFrame(gameLoop);
+}
 
 gameLoop();
 
 document.addEventListener('keydown', (event) => {
-    switch (event.key) {
-      case 'ArrowUp':
-        spaceship.vy -= spaceship.speed;
-        spaceship.rotation = -Math.PI / 2;
-        break;
-      case 'ArrowDown':
-        spaceship.vy += spaceship.speed;
-        spaceship.rotation = Math.PI / 2;
-        break;
-      case 'ArrowLeft':
-        spaceship.vx -= spaceship.speed;
-        spaceship.rotation = Math.PI;
-        break;
-      case 'ArrowRight':
-        spaceship.vx += spaceship.speed;
-        spaceship.rotation = 0;
-        break;
-      case ' ':
-        spaceship.vx *= 0.8;
-        spaceship.vy *= 0.8;
-        break;
-    }
-  });
-  
+  const rotationSpeed = 0.1;
+
+  switch (event.key) {
+    case 'w':
+    case 'W':
+      spaceship.vx += Math.cos(spaceship.rotation) * spaceship.speed;
+      spaceship.vy += Math.sin(spaceship.rotation) * spaceship.speed;
+      break;
+    case 'ArrowUp':
+      break;
+    case 'ArrowDown':
+      break;
+    case 'ArrowLeft':
+      spaceship.rotation -= rotationSpeed;
+      break;
+    case 'ArrowRight':
+      spaceship.rotation += rotationSpeed;
+      break;
+    case ' ':
+      spaceship.vx *= 0.8;
+      spaceship.vy *= 0.8;
+      break;
+  }
+});
+
+
   
