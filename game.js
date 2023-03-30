@@ -53,21 +53,26 @@ function drawSpaceshipShape() {
   ctx.translate(spaceship.x, spaceship.y);
   ctx.rotate(spaceship.rotation);
 
-  // Draw the main body of the spaceship
+  // Draw the main body of the spaceship (saucer section)
   ctx.beginPath();
-  ctx.moveTo(0, -spaceship.size);
-  ctx.lineTo(spaceship.size, spaceship.size);
-  ctx.lineTo(-spaceship.size, spaceship.size);
+  ctx.ellipse(0, 0, spaceship.size * 0.8, spaceship.size, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'white';
+  ctx.fill();
+
+  // Draw the ship's body (engineering section)
+  ctx.beginPath();
+  ctx.moveTo(-spaceship.size * 0.5, spaceship.size * 0.5);
+  ctx.lineTo(spaceship.size * 0.5, spaceship.size * 0.5);
+  ctx.lineTo(spaceship.size * 0.3, spaceship.size * 1.5);
+  ctx.lineTo(-spaceship.size * 0.3, spaceship.size * 1.5);
   ctx.closePath();
   ctx.fillStyle = 'white';
   ctx.fill();
 
-  // Draw the ship's bridge
+  // Draw the ship's nacelles
   ctx.beginPath();
-  ctx.moveTo(0, -spaceship.size * 0.5);
-  ctx.lineTo(spaceship.size * 0.5, spaceship.size * 0.5);
-  ctx.lineTo(-spaceship.size * 0.5, spaceship.size * 0.5);
-  ctx.closePath();
+  ctx.rect(-spaceship.size * 0.8, spaceship.size * 1.3, spaceship.size * 0.3, spaceship.size * 0.3);
+  ctx.rect(spaceship.size * 0.5, spaceship.size * 1.3, spaceship.size * 0.3, spaceship.size * 0.3);
   ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
   ctx.fill();
 
