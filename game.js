@@ -13,34 +13,50 @@ const spaceship = {
   angleOffset: Math.PI / 2
 };
 
-function createAsteroid() {
-    const size = 10 + Math.random() * 30;
-    const vertexCount = 6 + Math.floor(Math.random() * 5);
-    const vertices = [];
-    const safeZoneRadius = spaceship.size * 3;
-  
-    for (let i = 0; i < vertexCount; i++) {
-      const angle = (Math.PI * 2) * (i / vertexCount);
-      const distance = size + Math.random() * size * 0.3;
-      vertices.push({
-        x: Math.cos(angle) * distance,
-        y: Math.sin(angle) * distance,
-      });
+function generateAsteroids() {
+  const newAsteroids = [];
+  const extraAsteroids = 10;
+
+  for (let i = 0; i < extraAsteroids; i++) {
+    const asteroid = createAsteroid();
+
+    if (Math.abs(asteroid.x - spaceship.x) > canvas.width / 2 + asteroid.size || Math.abs(asteroid.y - spaceship.y) > canvas.height / 2 + asteroid.size) {
+      newAsteroids.push(asteroid);
     }
+  }
+
+  asteroids.push(...newAsteroids);
+}
+
+
+function createAsteroid() {
+  const size = 10 + Math.random() * 30;
+  const vertexCount = 6 + Math.floor(Math.random() * 5);
+  const vertices = [];
+  let x, y;
+
+  do {
+    x = Math.random() * canvas.width;
+    y = Math.random() * canvas.height;
+  } while (Math.sqrt(Math.pow(x - canvas.width / 2, 2) + Math.pow(y - canvas.height / 2, 2)) < spaceship.size * 3);
+
+  for (let i = 0; i < vertexCount; i++) {
+    const angle = (Math.PI * 2) * (i / vertexCount);
+    const distance = size + Math.random() * size * 0.3;
+    vertices.push({
+      x: Math.cos(angle) * distance,
+      y: Math.sin(angle) * distance,
+    });
+  }
+
+  return {
+    x: x + spaceship.x - canvas.width / 2,
+    y: y + spaceship.y - canvas.height / 2,
+    size,
+    vertices,
+  };
+}
   
-    let x, y;
-    do {
-      x = Math.random() * canvas.width;
-      y = Math.random() * canvas.height;
-    } while (Math.sqrt((spaceship.x - x) ** 2 + (spaceship.y - y) ** 2) < size + safeZoneRadius);
-  
-    return {
-      x,
-      y,
-      size,
-      vertices,
-    };
-  }  
 
 const asteroids = [];
 const asteroidCount = 50;
@@ -105,31 +121,29 @@ function drawAsteroids() {
 }
 
 function isCollision(asteroid) {
-  const dx = spaceship.x - asteroid.x;
-  const dy = spaceship.y - asteroid.y;
+  const dx = canvas.width / 2 - asteroid.x;
+  const dy = canvas.height / 2 - asteroid.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
   return distance < spaceship.size + asteroid.size;
 }
 
 function resetSpaceship() {
-  spaceship.x = canvas.width / 2;
-  spaceship.y = canvas.height / 2;
+  spaceship.vx = 0;
+  spaceship.vy = 0;
 }
 
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Update spaceship position and velocity
-  spaceship.x += spaceship.vx;
-  spaceship.y += spaceship.vy;
+  // Apply drag
   spaceship.vx *= spaceship.drag;
   spaceship.vy *= spaceship.drag;
 
-  // Keep the spaceship within the canvas boundaries
-  if (spaceship.x < 0) spaceship.x = 0;
-  if (spaceship.x > canvas.width) spaceship.x = canvas.width;
-  if (spaceship.y < 0) spaceship.y = 0;
-  if (spaceship.y > canvas.height) spaceship.y = canvas.height;
+  // Move asteroids
+  for (const asteroid of asteroids) {
+    asteroid.x -= spaceship.vx;
+    asteroid.y -= spaceship.vy;
+  }
 
   drawAsteroids();
   drawSpaceship();
@@ -141,8 +155,12 @@ function gameLoop() {
     }
   }
 
+  // Generate more asteroids
+  generateAsteroids();
+
   requestAnimationFrame(gameLoop);
 }
+
 
 gameLoop();
 
